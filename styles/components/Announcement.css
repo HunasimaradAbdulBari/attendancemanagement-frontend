@@ -1,0 +1,423 @@
+.announcements-page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.page-header h2 {
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.announcement-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  background: var(--surface-color);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.filter-tab {
+  padding: 0.5rem 1rem;
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.filter-tab.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.filter-tab:hover:not(.active) {
+  background: var(--border-color);
+}
+
+.announcements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.announcement-card {
+  transition: all 0.3s ease;
+}
+
+.announcement-card.unread {
+  border-left: 4px solid var(--primary-color);
+  background: linear-gradient(90deg, rgba(59, 130, 246, 0.05) 0%, var(--surface-color) 5%);
+}
+
+.announcement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.announcement-meta h3 {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.announcement-info {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.priority-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.priority-badge.high {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.priority-badge.medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.priority-badge.low {
+  background: #f0f9ff;
+  color: #0369a1;
+}
+
+.announcement-date,
+.announcement-author {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.announcement-content p {
+  line-height: 1.6;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.target-audience,
+.attachments {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.attachments a {
+  display: inline-block;
+  margin-left: 0.5rem;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.attachments a:hover {
+  text-decoration: underline;
+}
+
+.no-announcements {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+}
+
+/* Create Announcement Form Styles */
+.create-announcement-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.create-announcement-card {
+  margin-top: 2rem;
+}
+
+.announcement-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 1rem;
+  background: var(--surface-color);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.checkbox-group {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: var(--text-primary);
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin: 0;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+/* Timetable Styles */
+.timetable-page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.timetable-grid {
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.timetable-header {
+  display: grid;
+  grid-template-columns: 80px repeat(6, 1fr);
+  background: var(--background-color);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.period-header,
+.day-header {
+  padding: 1rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-primary);
+  border-right: 1px solid var(--border-color);
+}
+
+.day-header:last-child {
+  border-right: none;
+}
+
+.timetable-row {
+  display: grid;
+  grid-template-columns: 80px repeat(6, 1fr);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.timetable-row:last-child {
+  border-bottom: none;
+}
+
+.period-cell {
+  padding: 1rem;
+  text-align: center;
+  font-weight: 500;
+  background: var(--background-color);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+}
+
+.class-cell {
+  padding: 0.75rem;
+  border-right: 1px solid var(--border-color);
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.class-cell:last-child {
+  border-right: none;
+}
+
+.class-info {
+  text-align: center;
+}
+
+.class-info .subject {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.class-info .teacher {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.empty-cell {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.teacher-classes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.teacher-class-card {
+  padding: 1.5rem;
+  background: var(--background-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.teacher-class-card h4 {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.teacher-class-card p {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.class-actions button {
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.class-actions button:hover {
+  background: #2563eb;
+}
+
+.holidays-card {
+  margin-top: 2rem;
+}
+
+.holidays-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.holiday-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: var(--background-color);
+  border-radius: 6px;
+}
+
+.holiday-date {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.holiday-name {
+  flex: 1;
+  margin: 0 1rem;
+  color: var(--text-primary);
+}
+
+.holiday-type {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding: 0.25rem 0.5rem;
+  background: var(--surface-color);
+  border-radius: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .announcement-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .timetable-grid {
+    font-size: 0.8rem;
+  }
+  
+  .class-cell {
+    min-height: 60px;
+    padding: 0.5rem;
+  }
+  
+  .teacher-classes {
+    grid-template-columns: 1fr;
+  }
+  
+  .holiday-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
