@@ -17,19 +17,28 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  // Check for existing token on app load
-  if (typeof window !== 'undefined') {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-      api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+    // Check for existing token on app load
+    if (typeof window !== 'undefined') {
+      try {
+        const storedToken = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
+        
+        if (storedToken && storedUser) {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+          api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+        }
+      } catch (error) {
+        console.error('Error loading stored auth data:', error);
+        // Clear corrupted data
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
+      }
     }
-  }
-  setLoading(false);
-}, []);
+    setLoading(false);
+  }, []);
 
   const login = async (credentials) => {
     try {
@@ -39,8 +48,10 @@ export const AuthProvider = ({ children }) => {
       setToken(newToken);
       setUser(userData);
       
-      localStorage.setItem('token', newToken);
-      localStorage.setItem('user', JSON.stringify(userData));
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('token', newToken);
+        localStorage.setItem('user', JSON.stringify(userData));
+      }
       api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
       
       return { success: true };
@@ -55,8 +66,11 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setToken(null);
     setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
     delete api.defaults.headers.common['Authorization'];
   };
 

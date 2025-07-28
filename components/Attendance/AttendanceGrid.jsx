@@ -10,27 +10,33 @@ const AttendanceGrid = ({ classInfo }) => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (classInfo?.class && classInfo?.section) {
+    if (classInfo?.class && classInfo?.section && classInfo?.period && classInfo?.subject) {
       fetchStudents();
     }
   }, [classInfo]);
 
   useEffect(() => {
-    // GSAP animation for student cards
-    gsap.fromTo('.student-card', 
-      { opacity: 0, scale: 0.8 },
-      { opacity: 1, scale: 1, duration: 0.3, stagger: 0.05 }
-    );
+    if (students.length > 0) {
+      requestAnimationFrame(() => {
+        gsap.fromTo(
+          '.student-card',
+          { opacity: 0, scale: 0.8 },
+          { opacity: 1, scale: 1, duration: 0.3, stagger: 0.05 }
+        );
+      });
+    }
   }, [students]);
 
   const fetchStudents = async () => {
+    setLoading(true);
     try {
       const response = await attendanceAPI.getStudentsByClass(classInfo.class, classInfo.section);
-      setStudents(response.data.students);
-      
-      // Initialize attendance data with all present
+      const studentList = response.data.students || [];
+
+      setStudents(studentList);
+
       const initialData = {};
-      response.data.students.forEach(student => {
+      studentList.forEach(student => {
         initialData[student._id] = {
           studentId: student._id,
           status: 'present',
@@ -40,6 +46,7 @@ const AttendanceGrid = ({ classInfo }) => {
       setAttendanceData(initialData);
     } catch (error) {
       console.error('Error fetching students:', error);
+      alert('⚠️ Failed to fetch students. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -91,30 +98,31 @@ const AttendanceGrid = ({ classInfo }) => {
 
   const submitAttendance = async () => {
     setSubmitting(true);
-    
     try {
       const attendanceArray = Object.values(attendanceData);
-      
-      await attendanceAPI.takeAttendance({
+
+      const payload = {
         attendanceData: attendanceArray,
         classInfo: {
-          ...classInfo,
+          class: classInfo.class,
+          section: classInfo.section,
+          subject: classInfo.subject,
+          period: classInfo.period,
           date: new Date().toISOString().split('T')[0]
         }
-      });
+      };
 
-      // Show success notification
-      alert('Attendance submitted successfully!');
-      
-      // Notify about absent students
+      const response = await attendanceAPI.takeAttendance(payload);
+
+      alert(`✅ ${response.data.message}`);
+
       const absentStudents = attendanceArray.filter(record => record.status === 'absent');
       if (absentStudents.length > 0) {
-        alert(`${absentStudents.length} students marked absent. Notifications sent to parents.`);
+        alert(`ℹ️ ${absentStudents.length} students marked absent. Notifications sent.`);
       }
-      
     } catch (error) {
       console.error('Error submitting attendance:', error);
-      alert('Error submitting attendance. Please try again.');
+      alert(`❌ Failed to submit attendance: ${error.response?.data?.message || error.message}`);
     } finally {
       setSubmitting(false);
     }
@@ -127,14 +135,13 @@ const AttendanceGrid = ({ classInfo }) => {
 
   return (
     <div className="attendance-grid-container">
-      {/* Header Controls */}
       <div className="attendance-header">
         <div className="class-info">
           <h2>📊 Take Attendance</h2>
-          <p>Class: {classInfo.class}-{classInfo.section} | Subject: {classInfo.subject}</p>
+          <p>Class: {classInfo.class}-{classInfo.section} | Subject: {classInfo.subject} | Period: {classInfo.period}</p>
           <p>Date: {new Date().toLocaleDateString()}</p>
         </div>
-        
+
         <div className="attendance-summary">
           <div className="summary-item present">
             <span className="count">{presentCount}</span>
@@ -151,25 +158,17 @@ const AttendanceGrid = ({ classInfo }) => {
         </div>
       </div>
 
-      {/* Bulk Actions */}
       <div className="bulk-actions">
-        <button 
-          className="bulk-btn present-all"
-          onClick={markAllPresent}
-        >
+        <button className="bulk-btn present-all" onClick={markAllPresent}>
           ✅ Mark All Present
         </button>
-        <button 
-          className="bulk-btn absent-all"
-          onClick={markAllAbsent}
-        >
+        <button className="bulk-btn absent-all" onClick={markAllAbsent}>
           ❌ Mark All Absent
         </button>
       </div>
 
-      {/* Students Grid */}
       <div className="students-grid">
-        {students.map((student) => (
+        {students.map(student => (
           <StudentCard
             key={student._id}
             student={student}
@@ -180,12 +179,11 @@ const AttendanceGrid = ({ classInfo }) => {
         ))}
       </div>
 
-      {/* Submit Button */}
       <div className="submit-section">
-        <button 
+        <button
           className="submit-attendance-btn"
           onClick={submitAttendance}
-          disabled={submitting}
+          disabled={submitting || students.length === 0}
         >
           {submitting ? 'Submitting...' : '📤 Submit Attendance'}
         </button>

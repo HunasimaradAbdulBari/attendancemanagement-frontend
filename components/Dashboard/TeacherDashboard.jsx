@@ -8,44 +8,62 @@ const TeacherDashboard = () => {
   const [teacherClasses, setTeacherClasses] = useState([]);
   const [todaySchedule, setTodaySchedule] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchData();
     
-    // GSAP animations
-    gsap.fromTo('.teacher-card', 
-      { opacity: 0, scale: 0.9 },
-      { opacity: 1, scale: 1, duration: 0.5, stagger: 0.1 }
-    );
+    // GSAP animations with delay to ensure DOM is ready
+    setTimeout(() => {
+      const cards = document.querySelectorAll('.teacher-card');
+      if (cards.length > 0) {
+        gsap.fromTo(cards, 
+          { opacity: 0, scale: 0.9 },
+          { opacity: 1, scale: 1, duration: 0.5, stagger: 0.1 }
+        );
+      }
+    }, 100);
   }, []);
 
-// In components/Dashboard/TeacherDashboard.jsx
-const fetchData = async () => {
-  try {
-    // Add error handling for missing API endpoint
-    const classesRes = await timetableAPI.getTeacherClasses();
-    setTeacherClasses(classesRes.data.assignedClasses || []);
-    
-    // Set today's schedule with fallback
-    const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-    setTodaySchedule(classesRes.data.assignedClasses?.slice(0, 3) || []);
-    
-  } catch (error) {
-    console.error('Error fetching teacher data:', error);
-    // Set empty arrays as fallback
-    setTeacherClasses([]);
-    setTodaySchedule([]);
-  } finally {
-    setLoading(false);
-  }
-};
-  if (loading) return <div>Loading...</div>;
+  const fetchData = async () => {
+    try {
+      setError(null);
+      const classesRes = await timetableAPI.getTeacherClasses();
+      
+      const assignedClasses = classesRes.data.assignedClasses || [];
+      setTeacherClasses(assignedClasses);
+      
+      // Set today's schedule (first 3 classes as example)
+      const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+      setTodaySchedule(assignedClasses.slice(0, 3));
+      
+    } catch (error) {
+      console.error('Error fetching teacher data:', error);
+      setError('Failed to load dashboard data');
+      
+      // Set fallback data
+      const fallbackClasses = [
+        {
+          class: '10',
+          section: 'A',
+          subject: 'Mathematics'
+        }
+      ];
+      setTeacherClasses(fallbackClasses);
+      setTodaySchedule(fallbackClasses);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) return <div className="loading">Loading...</div>;
 
   return (
     <div className="teacher-dashboard">
       <div className="welcome-section">
-        <h2 className="animated-heading">Welcome, {user.name}!</h2>
-        <p>Employee ID: {user.employeeId}</p>
+        <h2 className="animated-heading">Welcome, {user?.name || 'Teacher'}!</h2>
+        <p>Employee ID: {user?.employeeId || 'N/A'}</p>
+        {error && <div className="error-message">{error}</div>}
       </div>
 
       <div className="dashboard-grid">
@@ -55,7 +73,7 @@ const fetchData = async () => {
           <div className="schedule-list">
             {todaySchedule.length > 0 ? (
               todaySchedule.map((classItem, index) => (
-                <div key={index} className="schedule-item">
+                <div key={`${classItem.class}-${classItem.section}-${index}`} className="schedule-item">
                   <div className="class-info">
                     <span className="class-name">{classItem.class}-{classItem.section}</span>
                     <span className="subject">{classItem.subject}</span>
@@ -79,7 +97,7 @@ const fetchData = async () => {
           <h3>👥 My Classes</h3>
           <div className="classes-grid">
             {teacherClasses.map((classItem, index) => (
-              <div key={index} className="class-card">
+              <div key={`${classItem.class}-${classItem.section}-${classItem.subject}-${index}`} className="class-card">
                 <div className="class-header">
                   <h4>{classItem.class}-{classItem.section}</h4>
                   <span className="subject-tag">{classItem.subject}</span>
@@ -137,7 +155,7 @@ const fetchData = async () => {
               <span className="stat-label">Total Classes</span>
             </div>
             <div className="stat-item">
-              <span className="stat-value">{user.subjects?.length || 0}</span>
+              <span className="stat-value">{user?.subjects?.length || 0}</span>
               <span className="stat-label">Subjects</span>
             </div>
             <div className="stat-item">

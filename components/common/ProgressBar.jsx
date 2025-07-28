@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import ProgressBar from 'progressbar.js'
-const ProgressBarComponent = ({ percentage, size = 100, strokeWidth = 4, color = '#10b981' }) => {
+
+const ProgressBar = ({ percentage, size = 100, strokeWidth = 4, color = '#10b981' }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDasharray = `${circumference} ${circumference}`;
@@ -44,4 +44,4 @@ const ProgressBarComponent = ({ percentage, size = 100, strokeWidth = 4, color =
   );
 };
 
-export default ProgressBarComponent;
+export default ProgressBar;

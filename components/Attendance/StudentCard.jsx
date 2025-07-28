@@ -1,3 +1,4 @@
+import React from "react";
 const StudentCard = ({ student, attendance, onToggleAttendance, onUpdateRemarks }) => {
   const isPresent = attendance?.status === 'present';
 

@@ -6,35 +6,68 @@ const Header = () => {
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [theme, setTheme] = useState('light');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-  // Load theme from localStorage
-  if (typeof window !== 'undefined') {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  }
-}, []);
+    setMounted(true);
+    // Load theme from localStorage only after mounting
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      setTheme(savedTheme);
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+  }, []);
 
-const toggleTheme = () => {
-  const newTheme = theme === 'light' ? 'dark' : 'light';
-  setTheme(newTheme);
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('theme', newTheme);
-  }
-  document.documentElement.setAttribute('data-theme', newTheme);
-};
+  const toggleTheme = () => {
+    if (!mounted) return;
+    
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('theme', newTheme);
+      document.documentElement.setAttribute('data-theme', newTheme);
+    }
+  };
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
     
-    // GSAP animation for sidebar
-    if (!sidebarOpen) {
-      gsap.to('.sidebar', { x: 0, duration: 0.3, ease: 'power2.out' });
-    } else {
-      gsap.to('.sidebar', { x: '-100%', duration: 0.3, ease: 'power2.out' });
+    // GSAP animation for sidebar with element check
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+      if (!sidebarOpen) {
+        gsap.to(sidebar, { x: 0, duration: 0.3, ease: 'power2.out' });
+      } else {
+        gsap.to(sidebar, { x: '-100%', duration: 0.3, ease: 'power2.out' });
+      }
     }
   };
+
+  // Don't render theme-dependent content until mounted
+  if (!mounted) {
+    return (
+      <header className="header">
+        <div className="header-left">
+          <button className="hamburger-menu" onClick={toggleSidebar}>
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <h1 className="header-title">Presidency University</h1>
+        </div>
+        <div className="header-right">
+          <div className="user-info">
+            <span className="user-name">{user?.name}</span>
+            <span className="user-role">({user?.userType})</span>
+          </div>
+          <div className="user-avatar">
+            {user?.name?.charAt(0).toUpperCase()}
+          </div>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <>

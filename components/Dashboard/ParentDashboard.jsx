@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { attendanceAPI, announcementAPI } from '../../services/api';
+import { attendanceAPI, announcementAPI, authAPI } from '../../services/api'; // ✅ FIXED LINE
 import AttendanceChart from '../Attendance/AttendanceChart';
 import ProgressBar from '../Common/ProgressBar';
 import { gsap } from 'gsap';
@@ -15,9 +15,8 @@ const ParentDashboard = () => {
 
   useEffect(() => {
     fetchData();
-    
-    // GSAP animations
-    gsap.fromTo('.parent-card', 
+
+    gsap.fromTo('.parent-card',
       { opacity: 0, y: 30 },
       { opacity: 1, y: 0, duration: 0.6, stagger: 0.1 }
     );
@@ -31,19 +30,18 @@ const ParentDashboard = () => {
 
   const fetchData = async () => {
     try {
-      // Get parent profile with children
+      // ✅ Get parent profile and children
       const profileRes = await authAPI.getProfile();
-      const childrenData = profileRes.data.user.children;
+      const childrenData = profileRes.data.user.children || [];
       setChildren(childrenData);
-      
+
       if (childrenData.length > 0) {
         setSelectedChild(childrenData[0]);
       }
 
-      // Get announcements
+      // ✅ Get latest announcements
       const announcementsRes = await announcementAPI.getAnnouncements({ limit: 5 });
-      setAnnouncements(announcementsRes.data.announcements);
-      
+      setAnnouncements(announcementsRes.data.announcements || []);
     } catch (error) {
       console.error('Error fetching parent data:', error);
     } finally {
@@ -109,7 +107,7 @@ const ParentDashboard = () => {
             <h3>📊 Attendance Overview</h3>
             {attendanceData && (
               <div className="attendance-stats">
-                <ProgressBar 
+                <ProgressBar
                   percentage={attendanceData.statistics.attendancePercentage}
                   size={120}
                   strokeWidth={8}
@@ -129,7 +127,7 @@ const ParentDashboard = () => {
                     <span className="stat-label">Total</span>
                   </div>
                 </div>
-                
+
                 {attendanceData.statistics.attendancePercentage < 75 && (
                   <div className="attendance-warning">
                     ⚠️ Attendance below 75% requirement!
@@ -151,18 +149,15 @@ const ParentDashboard = () => {
           <div className="parent-card absences-card">
             <h3>🚨 Recent Absences</h3>
             <div className="absences-list">
-              {attendanceData?.attendance
-                .filter(record => record.status === 'absent')
-                .slice(0, 5)
-                .map((record, index) => (
-                  <div key={index} className="absence-item">
-                    <div className="absence-date">
-                      {new Date(record.date).toLocaleDateString()}
-                    </div>
-                    <div className="absence-subject">{record.subject}</div>
-                    <div className="absence-period">Period {record.period}</div>
+              {attendanceData?.attendance?.filter(record => record.status === 'absent').slice(0, 5).map((record, index) => (
+                <div key={index} className="absence-item">
+                  <div className="absence-date">
+                    {new Date(record.date).toLocaleDateString()}
                   </div>
-                )) || <p>No recent absences</p>}
+                  <div className="absence-subject">{record.subject}</div>
+                  <div className="absence-period">Period {record.period}</div>
+                </div>
+              )) || <p>No recent absences</p>}
             </div>
           </div>
 
@@ -193,13 +188,13 @@ const ParentDashboard = () => {
           <div className="parent-card quick-actions-card">
             <h3>⚡ Quick Actions</h3>
             <div className="quick-actions">
-              <button 
+              <button
                 className="action-btn"
                 onClick={() => window.location.href = `/attendance/view?studentId=${selectedChild._id}`}
               >
                 📊 Full Attendance Report
               </button>
-              <button 
+              <button
                 className="action-btn"
                 onClick={() => window.location.href = '/announcements'}
               >
