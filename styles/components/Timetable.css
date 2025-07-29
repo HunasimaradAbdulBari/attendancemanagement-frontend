@@ -1,0 +1,608 @@
+/* Timetable Container */
+.timetable-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+/* Timetable Card */
+.timetable-card {
+  background: var(--surface-color);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  overflow-x: auto;
+}
+
+.timetable-card h3 {
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Timetable Grid */
+.timetable-grid {
+  overflow-x: auto;
+  margin: -1rem;
+  padding: 1rem;
+}
+
+.timetable-table {
+  min-width: 800px;
+  width: 100%;
+}
+
+.timetable-table table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface-color);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.timetable-table th {
+  background: var(--primary-color);
+  color: white;
+  padding: 1rem 0.75rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-bottom: 2px solid var(--primary-600);
+}
+
+.timetable-table th:first-child {
+  min-width: 120px;
+  background: var(--primary-600);
+}
+
+.timetable-table td {
+  padding: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  border-right: 1px solid var(--border-color);
+  vertical-align: top;
+  min-height: 80px;
+  height: 80px;
+}
+
+.timetable-table td:last-child {
+  border-right: none;
+}
+
+.timetable-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Period Number Cell */
+.period-number {
+  background: var(--background-color);
+  text-align: center;
+  font-weight: 600;
+  border-right: 2px solid var(--border-color);
+}
+
+.period-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.period-info strong {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.period-info small {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+/* Period Cell */
+.period-cell {
+  position: relative;
+  padding: 0.5rem !important;
+}
+
+/* Subject Card */
+.subject-card {
+  background: linear-gradient(135deg, var(--primary-50), var(--primary-100));
+  border: 1px solid var(--primary-200);
+  border-radius: 6px;
+  padding: 0.75rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-height: 70px;
+}
+
+.subject-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.subject-name {
+  font-weight: 600;
+  color: var(--primary-700);
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+.teacher-name {
+  font-size: 0.75rem;
+  color: var(--primary-600);
+  margin-bottom: 0.25rem;
+}
+
+.time-slot {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Empty Period */
+.empty-period {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 0.8rem;
+  min-height: 70px;
+  background: var(--background-color);
+  border-radius: 6px;
+  border: 1px dashed var(--border-color);
+}
+
+/* Subject Color Variations */
+.subject-card:nth-child(odd) {
+  background: linear-gradient(135deg, var(--success-50), var(--success-100));
+  border-color: var(--success-200);
+}
+
+.subject-card:nth-child(odd) .subject-name {
+  color: var(--success-700);
+}
+
+.subject-card:nth-child(odd) .teacher-name {
+  color: var(--success-600);
+}
+
+.subject-card:nth-child(even) {
+  background: linear-gradient(135deg, var(--warning-50), var(--warning-100));
+  border-color: var(--warning-200);
+}
+
+.subject-card:nth-child(even) .subject-name {
+  color: var(--warning-700);
+}
+
+.subject-card:nth-child(even) .teacher-name {
+  color: var(--warning-600);
+}
+
+/* Today's Schedule Card */
+.today-schedule-card {
+  background: var(--surface-color);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.today-schedule-card h3 {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.today-periods {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.today-period {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: var(--background-color);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.today-period:hover {
+  transform: translateX(4px);
+  box-shadow: var(--shadow-md);
+}
+
+.period-time {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 120px;
+}
+
+.period-number {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.time-range {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.period-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  text-align: right;
+}
+
+.period-details .subject {
+  font-weight: 600;
+  color: var(--primary-color);
+  font-size: 0.95rem;
+}
+
+.period-details .teacher {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Holidays Card */
+.holidays-card {
+  background: var(--surface-color);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.holidays-card h3 {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.holidays-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.holiday-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background: linear-gradient(135deg, #fef3c7, #fed7aa);
+  border-radius: 8px;
+  border: 1px solid #fde68a;
+  transition: transform 0.2s ease;
+}
+
+.holiday-item:hover {
+  transform: translateY(-2px);
+}
+
+.holiday-date {
+  font-weight: 600;
+  color: #92400e;
+  font-size: 0.9rem;
+  min-width: 80px;
+}
+
+.holiday-reason {
+  color: #78350f;
+  font-size: 0.9rem;
+  text-align: right;
+  flex: 1;
+}
+
+/* No Timetable State */
+.no-timetable {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.no-timetable h3 {
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.no-timetable p {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* Special Period Styling */
+.empty-period:contains("BREAK") {
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  border-color: #a7f3d0;
+  color: #065f46;
+  font-weight: 600;
+}
+
+.empty-period:contains("LUNCH") {
+  background: linear-gradient(135deg, #fef7ff, #fae8ff);
+  border-color: #e9d5ff;
+  color: #7c2d92;
+  font-weight: 600;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .timetable-container {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .timetable-table {
+    min-width: 700px;
+  }
+
+  .timetable-table th,
+  .timetable-table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  .subject-card {
+    padding: 0.5rem;
+    min-height: 60px;
+  }
+
+  .subject-name {
+    font-size: 0.8rem;
+  }
+
+  .teacher-name {
+    font-size: 0.7rem;
+  }
+
+  .time-slot {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .timetable-container {
+    padding: 0.5rem;
+    gap: 1rem;
+  }
+
+  .timetable-card,
+  .today-schedule-card,
+  .holidays-card {
+    padding: 1rem;
+  }
+
+  .timetable-table {
+    min-width: 600px;
+  }
+
+  .timetable-table th,
+  .timetable-table td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  .period-number {
+    min-width: 80px;
+  }
+
+  .subject-card {
+    padding: 0.4rem;
+    min-height: 50px;
+  }
+
+  .subject-name {
+    font-size: 0.75rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .teacher-name {
+    font-size: 0.65rem;
+    margin-bottom: 0.15rem;
+  }
+
+  .time-slot {
+    font-size: 0.6rem;
+  }
+
+  .today-period {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .period-details {
+    text-align: left;
+    width: 100%;
+  }
+
+  .holiday-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .holiday-reason {
+    text-align: left;
+  }
+
+  .period-time {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .timetable-table {
+    min-width: 500px;
+  }
+
+  .timetable-table th {
+    padding: 0.5rem 0.2rem;
+    font-size: 0.8rem;
+  }
+
+  .timetable-table td {
+    padding: 0.3rem 0.15rem;
+  }
+
+  .subject-card {
+    padding: 0.3rem;
+    min-height: 45px;
+  }
+
+  .subject-name {
+    font-size: 0.7rem;
+  }
+
+  .teacher-name {
+    font-size: 0.6rem;
+  }
+
+  .time-slot {
+    font-size: 0.55rem;
+  }
+
+  .period-info strong {
+    font-size: 0.8rem;
+  }
+
+  .period-info small {
+    font-size: 0.65rem;
+  }
+
+  .empty-period {
+    font-size: 0.7rem;
+    min-height: 45px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .timetable-container {
+    padding: 0;
+    gap: 1rem;
+  }
+
+  .timetable-card,
+  .today-schedule-card,
+  .holidays-card {
+    box-shadow: none;
+    border: 1px solid #000;
+    page-break-inside: avoid;
+  }
+
+  .subject-card {
+    background: #f5f5f5 !important;
+    border: 1px solid #ccc !important;
+  }
+
+  .today-period,
+  .holiday-item {
+    background: #f9f9f9 !important;
+    border: 1px solid #ddd !important;
+  }
+
+  .timetable-table th {
+    background: #e5e5e5 !important;
+    color: #000 !important;
+  }
+}
+
+/* Animation Effects */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timetable-card,
+.today-schedule-card,
+.holidays-card {
+  animation: slideIn 0.3s ease-out;
+}
+
+.today-period,
+.holiday-item {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Loading State */
+.timetable-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  background: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+/* Error State */
+.timetable-error {
+  text-align: center;
+  padding: 3rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  color: #dc2626;
+}
+
+/* Dark Mode Adjustments */
+[data-theme="dark"] .subject-card {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.2));
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .subject-card:nth-child(odd) {
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.2));
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+[data-theme="dark"] .subject-card:nth-child(even) {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.2));
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+[data-theme="dark"] .holiday-item {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+  border-color: rgba(251, 191, 36, 0.3);
+}
+
+[data-theme="dark"] .empty-period {
+  background: rgba(75, 85, 99, 0.3);
+  border-color: rgba(107, 114, 128, 0.5);
+}
