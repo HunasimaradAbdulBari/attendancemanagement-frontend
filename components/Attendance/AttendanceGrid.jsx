@@ -46,7 +46,8 @@ const AttendanceGrid = ({ classInfo }) => {
       setAttendanceData(initialData);
     } catch (error) {
       console.error('Error fetching students:', error);
-      alert('⚠️ Failed to fetch students. Please try again.');
+      const errorMessage = error.response?.data?.message || error.message || 'Unknown error';
+      alert(`⚠️ Failed to fetch students: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -114,15 +115,38 @@ const AttendanceGrid = ({ classInfo }) => {
 
       const response = await attendanceAPI.takeAttendance(payload);
 
-      alert(`✅ ${response.data.message}`);
+      if (response.data.success) {
+        alert(`✅ ${response.data.message}`);
+        
+        // Handle any partial errors
+        if (response.data.errors && response.data.errors.length > 0) {
+          console.warn('Some records had issues:', response.data.errors);
+          alert(`⚠️ Warning: ${response.data.errors.length} records had issues. Check console for details.`);
+        }
 
-      const absentStudents = attendanceArray.filter(record => record.status === 'absent');
-      if (absentStudents.length > 0) {
-        alert(`ℹ️ ${absentStudents.length} students marked absent. Notifications sent.`);
+        const absentStudents = attendanceArray.filter(record => record.status === 'absent');
+        if (absentStudents.length > 0) {
+          alert(`ℹ️ ${absentStudents.length} students marked absent. Notifications sent.`);
+        }
+      } else {
+        throw new Error(response.data.message || 'Unknown error occurred');
       }
     } catch (error) {
       console.error('Error submitting attendance:', error);
-      alert(`❌ Failed to submit attendance: ${error.response?.data?.message || error.message}`);
+      
+      let errorMessage = 'Failed to submit attendance';
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      // Check for specific duplicate key error
+      if (errorMessage.includes('duplicate key') || errorMessage.includes('E11000')) {
+        errorMessage = 'Attendance for this class/period already exists. The system has updated existing records.';
+      }
+      
+      alert(`❌ ${errorMessage}`);
     } finally {
       setSubmitting(false);
     }
