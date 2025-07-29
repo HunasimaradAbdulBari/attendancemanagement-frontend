@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { api } from '../services/api';
+import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -13,74 +13,89 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check for existing token on app load
-    if (typeof window !== 'undefined') {
-      try {
-        const storedToken = localStorage.getItem('token');
-        const storedUser = localStorage.getItem('user');
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
+      
+      if (token && storedUser) {
+        setUser(JSON.parse(storedUser));
+        setIsAuthenticated(true);
         
-        if (storedToken && storedUser) {
-          setToken(storedToken);
-          setUser(JSON.parse(storedUser));
-          api.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-        }
-      } catch (error) {
-        console.error('Error loading stored auth data:', error);
-        // Clear corrupted data
-        if (typeof window !== 'undefined') {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
+        // Verify token is still valid
+        try {
+          const response = await authAPI.getProfile();
+          setUser(response.data.user);
+        } catch (error) {
+          // Token expired or invalid
+          logout();
         }
       }
+    } catch (error) {
+      console.error('Auth check failed:', error);
+      logout();
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, []);
+  };
 
   const login = async (credentials) => {
     try {
-      const response = await api.post('/auth/login', credentials);
-      const { token: newToken, user: userData } = response.data;
+      setLoading(true);
+      const response = await authAPI.login(credentials);
       
-      setToken(newToken);
-      setUser(userData);
-      
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', newToken);
-        localStorage.setItem('user', JSON.stringify(userData));
+      if (response.data.success) {
+        const { token, user } = response.data;
+        
+        localStorage.setItem('token', token);
+        localStorage.setItem('user', JSON.stringify(user));
+        
+        setUser(user);
+        setIsAuthenticated(true);
+        
+        return { success: true };
+      } else {
+        return { success: false, error: response.data.message || 'Login failed' };
       }
-      api.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-      
-      return { success: true };
     } catch (error) {
+      console.error('Login error:', error);
       return { 
         success: false, 
         error: error.response?.data?.message || 'Login failed' 
       };
+    } finally {
+      setLoading(false);
     }
   };
 
   const logout = () => {
-    setToken(null);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     setUser(null);
-    
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-    }
-    delete api.defaults.headers.common['Authorization'];
+    setIsAuthenticated(false);
+    window.location.href = '/';
+  };
+
+  const updateUser = (userData) => {
+    const updatedUser = { ...user, ...userData };
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
   const value = {
     user,
-    token,
     loading,
+    isAuthenticated,
     login,
     logout,
-    isAuthenticated: !!token
+    updateUser
   };
 
   return (

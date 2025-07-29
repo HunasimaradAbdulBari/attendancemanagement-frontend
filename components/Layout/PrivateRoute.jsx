@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import LoadingSpinner from '../Common/LoadingSpinner';
 
 const PrivateRoute = ({ children, allowedRoles = [] }) => {
-  const { isAuthenticated, user, loading } = useAuth();
+  const { user, loading, isAuthenticated } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -13,24 +13,25 @@ const PrivateRoute = ({ children, allowedRoles = [] }) => {
         router.push('/');
         return;
       }
-      
+
       if (allowedRoles.length > 0 && !allowedRoles.includes(user?.userType)) {
-        router.push(`/dashboard/${user?.userType}`);
+        // Redirect to appropriate dashboard if user doesn't have permission
+        router.push(`/dashboard/${user?.userType || 'student'}`);
         return;
       }
     }
-  }, [isAuthenticated, user, loading, router, allowedRoles]);
+  }, [loading, isAuthenticated, user, router, allowedRoles]);
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <LoadingSpinner message="Checking authentication..." />;
   }
 
   if (!isAuthenticated) {
-    return null;
+    return <LoadingSpinner message="Redirecting to login..." />;
   }
 
   if (allowedRoles.length > 0 && !allowedRoles.includes(user?.userType)) {
-    return null;
+    return <LoadingSpinner message="Redirecting..." />;
   }
 
   return children;
